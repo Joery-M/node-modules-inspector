@@ -1,7 +1,7 @@
 import type { ListPackageDependenciesResult } from 'node-modules-tools'
 
 export interface ServerFunctions {
-  listDependencies: () => Promise<ListPackageDependenciesResult>
+  listDependencies: (force?: boolean) => Promise<ListPackageDependenciesResult>
   openInEditor: (filename: string) => void
   openInFinder: (filename: string) => void
 }

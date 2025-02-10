@@ -4,11 +4,11 @@ import { getBackend } from '~/backends'
 
 export const rawData = shallowRef<ListPackageDependenciesResult | null>(null)
 
-export async function fetchData() {
+export async function fetchData(force = false) {
   rawData.value = null
   const backend = getBackend()
   try {
-    const data = await backend.functions.listDependencies()
+    const data = await backend.functions.listDependencies(force)
 
     Object.freeze(data)
     for (const pkg of data.packages.values())

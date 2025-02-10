@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { toggleDark } from '~/composables/dark'
+import { fetchData } from '~/state/data'
 </script>
 
 <template>
@@ -21,6 +22,14 @@ import { toggleDark } from '~/composables/dark'
       @click="toggleDark()"
     >
       <div i-ph-sun-duotone dark:i-ph-moon-duotone text-xl />
+    </button>
+    <button
+      w-10 h-10 rounded-full hover:bg-active op50 hover:op100
+      flex="~ items-center justify-center"
+      title="Force reload"
+      @click="fetchData(true)"
+    >
+      <div i-ph-arrows-clockwise text-xl />
     </button>
   </div>
 </template>

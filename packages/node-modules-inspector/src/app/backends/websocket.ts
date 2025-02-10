@@ -86,9 +86,9 @@ export function createWebSocketBackend(options: WebSocketBackendOptions): Backen
     },
     isDynamic: true,
     functions: {
-      listDependencies: async () => {
+      listDependencies: async (force?: boolean) => {
         try {
-          return await rpc.listDependencies()
+          return await rpc.listDependencies(force)
         }
         catch (err) {
           error.value = err
