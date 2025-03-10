@@ -70,6 +70,10 @@ async function queryDependencies(options: ListPackageDependenciesOptions, query:
   return json
 }
 
+function getSpec(pkg: NpmPackageNode) {
+  return pkg._id ?? `${pkg.name}@${pkg.version || '0.0.0'}`
+}
+
 export async function listPackageDependencies(
   options: ListPackageDependenciesOptions,
 ): Promise<ListPackageDependenciesRawResult> {
@@ -100,11 +104,12 @@ export async function listPackageDependencies(
   // Used to link package deps with resolved version
   const packageSpecByLocation = new Map<string, string>()
 
-  packageSpecByLocation.set(rootPackage.location, rootPackage._id)
-  packages.set(rootPackage._id, {
+  const rootPkgSpec = getSpec(rootPackage)
+  packageSpecByLocation.set(rootPackage.location, rootPkgSpec)
+  packages.set(rootPkgSpec, {
     name: rootPackage.name,
     version: rootPackage.version,
-    spec: rootPackage._id,
+    spec: rootPkgSpec,
     private: rootPackage.private,
     filepath: rootPackage.path,
     workspace: true,
@@ -123,7 +128,7 @@ export async function listPackageDependencies(
     }
     const version = pkg.version || '0.0.0'
     const node: PackageNodeRaw = {
-      spec: pkg._id,
+      spec: getSpec(pkg),
       name,
       version,
       filepath: pkg.path,
@@ -140,14 +145,15 @@ export async function listPackageDependencies(
     raw: NpmPackageNode,
     clusters: Iterable<string>,
   ) {
-    if (packages.has(raw._id))
+    const spec = getSpec(raw)
+    if (packages.has(spec))
       return
 
-    packageSpecByLocation.set(raw.location, raw._id)
-    packages.set(raw._id, {
+    packageSpecByLocation.set(raw.location, spec)
+    packages.set(spec, {
       name: raw.name,
       version: raw.version,
-      spec: raw._id,
+      spec: spec,
       private: raw.private,
       filepath: raw.path,
       workspace: false,
@@ -174,7 +180,7 @@ export async function listPackageDependencies(
     ...workspaces,
     rootPackage,
   ).forEach((raw) => {
-    const pkg = packages.get(raw._id)
+    const pkg = packages.get(getSpec(raw))
     if (!pkg)
       return
 
